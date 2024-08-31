@@ -1,5 +1,9 @@
-package net.epic.neoforgemodone;
+package net.epic.neoforgeone;
 
+import net.epic.neoforgeone.block.ModBlocks;
+import net.epic.neoforgeone.item.ModItems;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.neoforged.bus.EventBus;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -18,14 +22,14 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
-@Mod(NeoforgeModOne.MOD_ID)
-public class NeoforgeModOne {
+@Mod(NeoforgeOne.MOD_ID)
+public class NeoforgeOne {
     public static final String MOD_ID = "neoforgeone";
     private static final Logger LOGGER = LogUtils.getLogger();
 
 
 
-    public NeoforgeModOne(IEventBus modEventBus, ModContainer modContainer) {
+    public NeoforgeOne(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
@@ -33,6 +37,9 @@ public class NeoforgeModOne {
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -47,7 +54,14 @@ public class NeoforgeModOne {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.FLOUR);
+            event.accept(ModItems.RAW_FLOUR);
+        }
+        if(event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(ModBlocks.FLOUR_BLOCK);
+            event.accept(ModBlocks.FLOUR_REV);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
